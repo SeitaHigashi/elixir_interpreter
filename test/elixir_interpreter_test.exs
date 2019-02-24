@@ -8,8 +8,9 @@ defmodule ElixirInterpreterTest do
 
   test "arg_convertion" do
     assert ElixirInterpreter.Core.arg_convertion(["\[2,", "3\]"]) == [[2,3]]
-    assert ElixirInterpreter.Core.arg_convertion(["2,", "3"]) == [2,3]
+    assert ElixirInterpreter.Core.arg_convertion(["\[2,", "\[3\]\]"]) == [[2,[3]]]
     assert ElixirInterpreter.Core.arg_convertion(["\[2\]"]) == [[2]]
+    assert ElixirInterpreter.Core.arg_convertion(["2,", "3"]) == [2,3]
     assert ElixirInterpreter.Core.arg_convertion(["2"]) == [2]
   end
 end
