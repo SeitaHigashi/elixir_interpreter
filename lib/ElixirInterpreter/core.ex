@@ -1,4 +1,5 @@
 defmodule ElixirInterpreter.Core do
+
   def to_function(str) when is_binary(str) do
     [ order | args ] = str |> String.split
     { func, module } = order
@@ -7,5 +8,8 @@ defmodule ElixirInterpreter.Core do
     module = Module.concat(module)
     func = String.to_atom(func)
     apply(module, func, args)
+  end
+
+  defp argment_convertion([arg | tail]) do
   end
 end

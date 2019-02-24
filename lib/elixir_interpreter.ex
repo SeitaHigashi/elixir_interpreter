@@ -15,4 +15,9 @@ defmodule ElixirInterpreter do
   def hello do
     :world
   end
+
+  def do_func do
+    IO.gets("")
+    |> ElixirInterpreter.Core.to_function
+  end
 end
