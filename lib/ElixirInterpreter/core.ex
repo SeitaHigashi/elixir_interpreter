@@ -34,9 +34,6 @@ defmodule ElixirInterpreter.Core do
         IO.puts "number"
         arg = String.to_integer(arg)
         [arg | arg_convertion(tail, inheriting)]
-      tail == [] ->
-        IO.puts "[]"
-        [arg | []]
       true ->
         IO.puts "true"
         [ arg | arg_convertion(tail, inheriting)]
