@@ -7,10 +7,11 @@ defmodule ElixirInterpreterTest do
   end
 
   test "arg_convertion" do
-    assert ElixirInterpreter.Core.arg_convertion(["\[2,", "3\]"]) == [[2,3]]
-    assert ElixirInterpreter.Core.arg_convertion(["\[2,", "\[3\]\]"]) == [[2,[3]]]
-    assert ElixirInterpreter.Core.arg_convertion(["\[2\]"]) == [[2]]
-    assert ElixirInterpreter.Core.arg_convertion(["2,", "3"]) == [2,3]
-    assert ElixirInterpreter.Core.arg_convertion(["2"]) == [2]
+    assert ElixirInterpreter.Core.arg_convertion("\[2, 3\]") == [[2,3]]
+    assert ElixirInterpreter.Core.arg_convertion("\[2,\[3\]\]") == [[2,[3]]]
+    assert ElixirInterpreter.Core.arg_convertion("\[2\]") == [[2]]
+    assert ElixirInterpreter.Core.arg_convertion("2,3") == [2,3]
+    assert ElixirInterpreter.Core.arg_convertion("2") == [2]
+    assert ElixirInterpreter.Core.arg_convertion("1,[2,[3,[4,5,[[2]]]]]") == [1,[2,[3,[4,5,[[2]]]]]]
   end
 end

@@ -9,35 +9,41 @@ defmodule ElixirInterpreter.Core do
     apply(module, func, args)
   end
 
-  def arg_convertion( arg, inheriting \\ [])
-  def arg_convertion([arg | tail], inheriting ) do
-    IO.puts "\n" <> arg
-    IO.inspect tail
-    IO.inspect inheriting
+  #Regex.split ~r{(\[.*\]|,)}, string, include_captures: true
+  def arg_convertion(arg) when is_binary(arg) do
+    Regex.split(~r/(\{.*\}|\[.*\]|,|\s)/, arg, include_captures: true)
+    |> arg_convertion
+  end
+  def arg_convertion([head | tail]) do
+    #IO.puts "\nhead:" <> head
+    #IO.inspect tail
     cond do
-      String.match? arg, ~r/\[/ ->
-        IO.puts "["
-        tail = [Regex.replace(~r/\[/, arg, "") | tail ]
-        head = tail
+      Regex.match?(~r/\[.*\]/, head) ->
+        #IO.puts "match:[]"
+        list = head
+        |> remove_head_last(1,1)
         |> arg_convertion
-        [head | inheriting]
-        |> Enum.reverse
-      String.match? arg, ~r/\]/ ->
-        IO.puts "]"
-        [Regex.replace(~r/\]/, arg, "") | [] ]
-        |> arg_convertion
-      String.match? arg, ~r/,/ ->
-        IO.puts ","
-        [Regex.replace(~r/,/, arg, "") | tail]
-        |> arg_convertion(inheriting)
-      String.match? arg, ~r/\d+/ ->
-        IO.puts "number"
-        arg = String.to_integer(arg)
-        [arg | arg_convertion(tail, inheriting)]
+        [ list | arg_convertion(tail)]
+      Regex.match?(~r/,/, head) -> arg_convertion(tail)
+      Regex.match?(~r/\d/, head) ->
+        #IO.puts "match:number"
+        num = head
+        |> String.to_integer()
+        [num | arg_convertion(tail)]
       true ->
-        IO.puts "true"
-        [ arg | arg_convertion(tail, inheriting)]
+        #IO.puts "match:true"
+        arg_convertion(tail)
     end
   end
-  def arg_convertion([], _inheriting ), do: []
+  def arg_convertion([]), do: []
+
+  defp remove_head_last(str, head, last) do
+    len = String.length(str)
+    str
+    |> String.slice(head, len)
+    |> String.reverse
+    |> String.slice(last, len)
+    |> String.reverse
+  end
+
 end
