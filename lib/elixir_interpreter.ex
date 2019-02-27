@@ -18,6 +18,6 @@ defmodule ElixirInterpreter do
 
   def do_func do
     IO.gets("")
-    |> ElixirInterpreter.Core.to_function
+    |> ElixirInterpreter.Core.do_function
   end
 end

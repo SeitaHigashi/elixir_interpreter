@@ -6,12 +6,19 @@ defmodule ElixirInterpreter.Core do
     |> List.pop_at(-1)
     module = Module.concat(module)
     func = String.to_atom(func)
-    apply(module, func, args)
+    #apply(module, func, args)
+    args = Enum.join(args, " ")
+    %{ module: module, function: func, argments: args}
   end
 
-  #Regex.split ~r{(\[.*\]|,)}, string, include_captures: true
+  def do_function(str) when is_binary(str) do
+    data = to_function(str)
+    args = arg_convertion(data.argments)
+    apply(data.module, data.function, args)
+  end
+
   def arg_convertion(arg) when is_binary(arg) do
-    Regex.split(~r/(\{.*\}|\[.*\]|,|\s)/, arg, include_captures: true)
+    Regex.split(~r/(\[.*\]|\{.*\}|,|\".*?\"|\s)/, arg, include_captures: true)
     |> arg_convertion
   end
   def arg_convertion([head | tail]) do
@@ -25,11 +32,16 @@ defmodule ElixirInterpreter.Core do
         |> arg_convertion
         [ list | arg_convertion(tail)]
       Regex.match?(~r/,/, head) -> arg_convertion(tail)
+      Regex.match?(~r/\".*\"/, head) ->
+        str = head
+        |> remove_head_last(1,1)
+        [ str | arg_convertion(tail)]
       Regex.match?(~r/\d/, head) ->
         #IO.puts "match:number"
         num = head
         |> String.to_integer()
         [num | arg_convertion(tail)]
+      Regex.match?(~r/nil/, head) -> [ nil | arg_convertion(tail)]
       true ->
         #IO.puts "match:true"
         arg_convertion(tail)
