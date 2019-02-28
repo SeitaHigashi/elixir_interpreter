@@ -35,12 +35,25 @@ defmodule ElixirInterpreter.Core do
         |> arg_convertion
         |> List.to_tuple
         [ list | arg_convertion(tail)]
+      String.first(head) == ":" ->
+        IO.puts "head:" <> head
+        [ head | tail] = case String.length(head) do
+          1 ->
+            [head | tail] = tail
+            head = head |> remove_head_last(1, 1)
+            [head | tail]
+          _ ->
+            head = head |> remove_head_last(1, 0)
+            [ head | tail]
+        end
+        atom = head |> String.to_atom()
+        [ atom | arg_convertion(tail)]
       Regex.match?(~r/,/, head) -> arg_convertion(tail)
       Regex.match?(~r/\".*\"/, head) ->
         str = head
         |> remove_head_last(1,1)
         [ str | arg_convertion(tail)]
-      Regex.match?(~r/\d.\d/, head) ->
+     Regex.match?(~r/\d.\d/, head) ->
         num = head
         |> String.to_float
         [num | arg_convertion(tail)]

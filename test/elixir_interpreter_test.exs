@@ -8,6 +8,7 @@ defmodule ElixirInterpreterTest do
 
   test "arg_convertion string" do
     assert ElixirInterpreter.Core.arg_convertion("\"string\"") == ["string"]
+    assert ElixirInterpreter.Core.arg_convertion("\"\"string\"\"") == ["\"string\""]
     assert ElixirInterpreter.Core.arg_convertion("\"\"") == [""]
   end
 
@@ -19,6 +20,12 @@ defmodule ElixirInterpreterTest do
   test "arg_convertion float" do
     assert ElixirInterpreter.Core.arg_convertion("2.1") == [2.1]
     assert ElixirInterpreter.Core.arg_convertion("2.1, 3.1") == [2.1, 3.1]
+  end
+
+  test "arg_convertion atom" do
+    assert ElixirInterpreter.Core.arg_convertion(":atom") == [:atom]
+    assert ElixirInterpreter.Core.arg_convertion(":\"atom\"") == [:atom]
+    assert ElixirInterpreter.Core.arg_convertion(":\"\"atom\"\"") == [:"\"atom\""]
   end
 
   test "arg_convertion tuple" do
