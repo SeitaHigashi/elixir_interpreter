@@ -21,15 +21,19 @@ defmodule ElixirInterpreter.Core do
     Regex.split(~r/(\[.*\]|\{.*\}|,|\".*?\"|\s)/, arg, include_captures: true)
     |> arg_convertion
   end
+
   def arg_convertion([head | tail]) do
-    #IO.puts "\nhead:" <> head
-    #IO.inspect tail
     cond do
-      Regex.match?(~r/\[.*\]/, head) ->
-        #IO.puts "match:[]"
+      String.first(head) == "[" ->
         list = head
         |> remove_head_last(1,1)
         |> arg_convertion
+        [ list | arg_convertion(tail)]
+      String.first(head) == "{" ->
+         list = head
+        |> remove_head_last(1,1)
+        |> arg_convertion
+        |> List.to_tuple
         [ list | arg_convertion(tail)]
       Regex.match?(~r/,/, head) -> arg_convertion(tail)
       Regex.match?(~r/\".*\"/, head) ->
@@ -37,13 +41,11 @@ defmodule ElixirInterpreter.Core do
         |> remove_head_last(1,1)
         [ str | arg_convertion(tail)]
       Regex.match?(~r/\d/, head) ->
-        #IO.puts "match:number"
         num = head
         |> String.to_integer()
         [num | arg_convertion(tail)]
       Regex.match?(~r/nil/, head) -> [ nil | arg_convertion(tail)]
       true ->
-        #IO.puts "match:true"
         arg_convertion(tail)
     end
   end
