@@ -40,9 +40,13 @@ defmodule ElixirInterpreter.Core do
         str = head
         |> remove_head_last(1,1)
         [ str | arg_convertion(tail)]
+      Regex.match?(~r/\d.\d/, head) ->
+        num = head
+        |> String.to_float
+        [num | arg_convertion(tail)]
       Regex.match?(~r/\d/, head) ->
         num = head
-        |> String.to_integer()
+        |> String.to_integer
         [num | arg_convertion(tail)]
       Regex.match?(~r/nil/, head) -> [ nil | arg_convertion(tail)]
       true ->

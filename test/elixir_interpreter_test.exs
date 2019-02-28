@@ -16,6 +16,11 @@ defmodule ElixirInterpreterTest do
     assert ElixirInterpreter.Core.arg_convertion("2, 3") == [2, 3]
   end
 
+  test "arg_convertion float" do
+    assert ElixirInterpreter.Core.arg_convertion("2.1") == [2.1]
+    assert ElixirInterpreter.Core.arg_convertion("2.1, 3.1") == [2.1, 3.1]
+  end
+
   test "arg_convertion tuple" do
     assert ElixirInterpreter.Core.arg_convertion("\{2, 3\}") == [{2,3}]
     assert ElixirInterpreter.Core.arg_convertion("\{2, \"3\"\}") == [{2,"3"}]
@@ -32,8 +37,9 @@ defmodule ElixirInterpreterTest do
 
   test "arg_convertion" do
     assert ElixirInterpreter.Core.arg_convertion("[\"string\", 2, [3]]") == [["string", 2, [3]]]
-    assert ElixirInterpreter.Core.arg_convertion("\{2, \[3\]\}") == [{2,[3]}]
+    assert ElixirInterpreter.Core.arg_convertion("\{2, \[3.1\]\}") == [{2,[3.1]}]
     assert ElixirInterpreter.Core.arg_convertion("\[2, \{3\}\]") == [[2,{3}]]
+    assert ElixirInterpreter.Core.arg_convertion("\[2.1, \{3\}\]") == [[2.1,{3}]]
   end
 
 end
