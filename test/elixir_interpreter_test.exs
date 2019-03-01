@@ -28,6 +28,10 @@ defmodule ElixirInterpreterTest do
     assert ElixirInterpreter.Core.arg_convertion(":\"\\\"atom\\\"\"") == [:"\"atom\""]
   end
 
+  #test "arg_convertion map" do
+  #  assert ElixirInterpreter.Core.arg_convertion("\%\{\"2\" => 2, \"3\" => 3\}") == [%{"2"=>2, "3"=>3}]
+  #end
+
   test "arg_convertion tuple" do
     assert ElixirInterpreter.Core.arg_convertion("\{2, 3\}") == [{2,3}]
     assert ElixirInterpreter.Core.arg_convertion("\{2, \"3\"\}") == [{2,"3"}]
@@ -40,6 +44,10 @@ defmodule ElixirInterpreterTest do
     assert ElixirInterpreter.Core.arg_convertion("2,3") == [2,3]
     assert ElixirInterpreter.Core.arg_convertion("2") == [2]
     assert ElixirInterpreter.Core.arg_convertion("1,[2,[3,[4,5,[[2]]]]]") == [1,[2,[3,[4,5,[[2]]]]]]
+  end
+
+  test "arg_convertion keyword list" do
+    assert ElixirInterpreter.Core.arg_convertion("\[num: 3, str: \"string\"\]") == [[num: 3, str: "string"]]
   end
 
   test "arg_convertion" do

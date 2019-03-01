@@ -1,4 +1,5 @@
 defmodule ElixirInterpreter.Core do
+  alias ElixirInterpreter.Core
   def to_function(str) when is_binary(str) do
     [ order | args ] = str |> String.split
     { func, module } = order
@@ -18,41 +19,20 @@ defmodule ElixirInterpreter.Core do
   end
 
   def arg_convertion(arg) when is_binary(arg) do
-    Regex.split(~r/(\[.*\]|\{.*\}|,|\".*?[^\\]\"|\s)/, arg, include_captures: true)
+    Regex.split(~r/(\%\{.*\}|\[.*\]|\{.*\}|,|\".*?[^\\]\"|\s)/, arg, include_captures: true)
     |> arg_convertion
   end
 
-  def arg_convertion([head | tail]) do
+  def arg_convertion(list = [head | tail]) do
     cond do
-      String.first(head) == "[" ->
-        list = head
-        |> remove_head_last(1,1)
-        |> arg_convertion
-        [ list | arg_convertion(tail)]
-      String.first(head) == "{" ->
-         list = head
-        |> remove_head_last(1,1)
-        |> arg_convertion
-        |> List.to_tuple
-        [ list | arg_convertion(tail)]
-      String.first(head) == ":" ->
-        IO.puts "head:" <> head
-        [ head | tail] = case String.length(head) do
-          1 ->
-            [head | tail] = tail
-            head = head |> remove_head_last(1, 1)
-            [head | tail]
-          _ ->
-            head = head |> remove_head_last(1, 0)
-            [ head | tail]
-        end
-        atom = head |> input_convertion |> String.to_atom()
-        [ atom | arg_convertion(tail)]
+      String.first(head) == "[" -> Core.List.to_arg list
+      String.first(head) == "{" -> Core.Tuple.to_arg list
+      String.first(head) == ":" -> Core.Atom.to_arg list
       Regex.match?(~r/,/, head) -> arg_convertion(tail)
       Regex.match?(~r/\".*\"/, head) ->
         str = head
-        |> remove_head_last(1,1)
-        |> input_convertion
+        |> Core.Utils.remove_head_last(1,1)
+        |> Core.Utils.input_convertion
         [ str | arg_convertion(tail)]
      Regex.match?(~r/\d.\d/, head) ->
         num = head
@@ -68,17 +48,5 @@ defmodule ElixirInterpreter.Core do
     end
   end
   def arg_convertion([]), do: []
-
-  defp remove_head_last(str, head, last) do
-    len = String.length(str)
-    str
-    |> String.slice(head, len)
-    |> String.reverse
-    |> String.slice(last, len)
-    |> String.reverse
-  end
-
-  defp input_convertion(str) when is_binary(str), do: str |> String.replace("\\", "")
-
 
 end
