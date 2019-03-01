@@ -18,7 +18,7 @@ defmodule ElixirInterpreter.Core do
   end
 
   def arg_convertion(arg) when is_binary(arg) do
-    Regex.split(~r/(\[.*\]|\{.*\}|,|\".*?\"|\s)/, arg, include_captures: true)
+    Regex.split(~r/(\[.*\]|\{.*\}|,|\".*?[^\\]\"|\s)/, arg, include_captures: true)
     |> arg_convertion
   end
 
@@ -46,12 +46,13 @@ defmodule ElixirInterpreter.Core do
             head = head |> remove_head_last(1, 0)
             [ head | tail]
         end
-        atom = head |> String.to_atom()
+        atom = head |> input_convertion |> String.to_atom()
         [ atom | arg_convertion(tail)]
       Regex.match?(~r/,/, head) -> arg_convertion(tail)
       Regex.match?(~r/\".*\"/, head) ->
         str = head
         |> remove_head_last(1,1)
+        |> input_convertion
         [ str | arg_convertion(tail)]
      Regex.match?(~r/\d.\d/, head) ->
         num = head
@@ -76,5 +77,8 @@ defmodule ElixirInterpreter.Core do
     |> String.slice(last, len)
     |> String.reverse
   end
+
+  defp input_convertion(str) when is_binary(str), do: str |> String.replace("\\", "")
+
 
 end
