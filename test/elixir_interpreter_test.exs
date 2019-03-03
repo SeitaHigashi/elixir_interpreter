@@ -48,6 +48,8 @@ defmodule ElixirInterpreterTest do
 
   test "arg_convertion keyword list" do
     assert ElixirInterpreter.Core.arg_convertion("\[num: 3, str: \"string\"\]") == [[num: 3, str: "string"]]
+    assert ElixirInterpreter.Core.arg_convertion("\[num: 3, keyword: \[str: \"string\"\]\]") == [[num: 3, keyword: [str: "string"]]]
+    assert ElixirInterpreter.Core.arg_convertion("\[num: 3, keyword: \[str: \"string\", exam: :atom\]\]") == [[num: 3, keyword: [str: "string", exam: :atom]]]
   end
 
   test "arg_convertion" do
