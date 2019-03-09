@@ -22,8 +22,18 @@ defmodule ElixirInterpreter.Core do
     apply(data.module, data.function, args)
   end
 
-  def arg_convertion(arg) when is_binary(arg) do
+  def arg_split(arg) when is_binary(arg) do
     Regex.split(~r/(\%\{.*\}|\[.*\]|\{.*\}|,|\".*?[^\\]\"|\s)/, arg, include_captures: true)
+  end
+
+  def arg_list_shaping(arg) when is_list(arg) do
+    Core.Utils.drop_value(arg, ["", " "])
+  end
+
+  def arg_convertion(arg) when is_binary(arg) do
+    arg
+    |> arg_split
+    |> arg_list_shaping
     |> arg_convertion
   end
 
@@ -41,11 +51,14 @@ defmodule ElixirInterpreter.Core do
       Regex.match?(~r/,/, head) ->
         arg_convertion(tail)
 
-      Regex.match?(~r/.+:\s.+/, head) ->
+      Regex.match?(~r/.+:/, head) ->
+        [value | tail] = tail
+        head = ":" <> Core.Utils.remove_head_last(head, 0, 1)
+
         tuple =
-          Regex.split(~r/:\s/, (":" <> head), parts: 2)
-          |> arg_convertion()
-          |> List.to_tuple()
+          [head, value]
+          |> arg_convertion
+          |> List.to_tuple
 
         [tuple | arg_convertion(tail)]
 
