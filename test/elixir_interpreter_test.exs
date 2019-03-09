@@ -28,9 +28,11 @@ defmodule ElixirInterpreterTest do
     assert ElixirInterpreter.Core.arg_convertion(":\"\\\"atom\\\"\"") == [:"\"atom\""]
   end
 
-  #test "arg_convertion map" do
-  #  assert ElixirInterpreter.Core.arg_convertion("\%\{\"2\" => 2, \"3\" => 3\}") == [%{"2"=>2, "3"=>3}]
-  #end
+  test "arg_convertion map" do
+    assert ElixirInterpreter.Core.arg_convertion("\%\{\"2\" => 2, \"3\" => 3\}") == [%{"2"=>2, "3"=>3}]
+    assert ElixirInterpreter.Core.arg_convertion("\%\{\"3\" => 3\, map: 2}") == [%{"3" => 3, map: 2}]
+    assert ElixirInterpreter.Core.arg_convertion("\%\{\"3\" => 3\, map: [2, 3]}") == [%{"3" => 3, map: [2, 3]}]
+  end
 
   test "arg_convertion tuple" do
     assert ElixirInterpreter.Core.arg_convertion("\{2, 3\}") == [{2,3}]

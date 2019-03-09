@@ -27,7 +27,7 @@ defmodule ElixirInterpreter.Core do
   end
 
   def arg_list_shaping(arg) when is_list(arg) do
-    Core.Utils.drop_value(arg, ["", " "])
+    Core.Utils.drop_value(arg, ["", " ", ","])
   end
 
   def arg_convertion(arg) when is_binary(arg) do
@@ -48,8 +48,14 @@ defmodule ElixirInterpreter.Core do
       String.first(head) == ":" ->
         Core.Atom.to_arg(list)
 
-      Regex.match?(~r/,/, head) ->
-        arg_convertion(tail)
+      String.first(head) == "%" ->
+        cond do
+          String.at(head, 1) == "{" ->
+            Core.Map.to_arg(list)
+
+          true ->
+            Core.Map.to_arg(list)
+        end
 
       Regex.match?(~r/.+:/, head) ->
         [value | tail] = tail
@@ -58,7 +64,7 @@ defmodule ElixirInterpreter.Core do
         tuple =
           [head, value]
           |> arg_convertion
-          |> List.to_tuple
+          |> List.to_tuple()
 
         [tuple | arg_convertion(tail)]
 
