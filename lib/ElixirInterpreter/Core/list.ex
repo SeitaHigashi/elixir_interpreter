@@ -7,7 +7,6 @@ defmodule ElixirInterpreter.Core.List do
         Regex.match?(~r/\[(.+:\s.+)+\]/, head) ->
           head
           |> Core.Utils.remove_head_last(1, 1)
-          #|> String.split(", ")
           |> Core.arg_split
           |> Core.arg_list_shaping
           |> Core.arg_convertion()

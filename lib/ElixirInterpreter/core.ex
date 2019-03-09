@@ -11,7 +11,6 @@ defmodule ElixirInterpreter.Core do
 
     module = Module.concat(module)
     func = String.to_atom(func)
-    # apply(module, func, args)
     args = Enum.join(args, " ")
     %{module: module, function: func, argments: args}
   end
