@@ -22,7 +22,7 @@ defmodule ElixirInterpreter.Core do
   end
 
   def arg_split(arg) when is_binary(arg) do
-    Regex.split(~r/(\%\{.*\}|\[.*\]|\{.*\}|,|\".*?[^\\]\"|\s)/, arg, include_captures: true)
+    Regex.split(~r/(\%.*\{.*\}|\[.*\]|\{.*\}|,|\".*?[^\\]\"|\s)/, arg, include_captures: true)
   end
 
   def arg_list_shaping(arg) when is_list(arg) do
@@ -53,7 +53,7 @@ defmodule ElixirInterpreter.Core do
             Core.Map.to_arg(list)
 
           true ->
-            Core.Map.to_arg(list)
+            Core.Struct.to_arg(list)
         end
 
       Regex.match?(~r/.+:/, head) ->
@@ -75,7 +75,7 @@ defmodule ElixirInterpreter.Core do
 
         [str | arg_convertion(tail)]
 
-      Regex.match?(~r/\d.\d/, head) ->
+      Regex.match?(~r/\d\.\d/, head) ->
         num =
           head
           |> String.to_float()

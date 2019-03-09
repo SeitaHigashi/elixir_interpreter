@@ -32,6 +32,11 @@ defmodule ElixirInterpreterTest do
     assert ElixirInterpreter.Core.arg_convertion("\%\{\"2\" => 2, \"3\" => 3\}") == [%{"2"=>2, "3"=>3}]
     assert ElixirInterpreter.Core.arg_convertion("\%\{\"3\" => 3\, map: 2}") == [%{"3" => 3, map: 2}]
     assert ElixirInterpreter.Core.arg_convertion("\%\{\"3\" => 3\, map: [2, 3]}") == [%{"3" => 3, map: [2, 3]}]
+    assert ElixirInterpreter.Core.arg_convertion("\%\{year: 2019, month: 3, day: 30\}") == [%{year: 2019, month: 3, day: 30}]
+  end
+
+  test "arg_convertion struct" do
+    assert ElixirInterpreter.Core.arg_convertion("\%Date\{year: 2019, month: 3, day: 30\}") == [~D[2019-03-30]]
   end
 
   test "arg_convertion tuple" do

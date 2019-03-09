@@ -7,8 +7,7 @@ defmodule ElixirInterpreter.Core.Map do
     |> Core.arg_split
     |> Core.Utils.drop_value(["", " ", ",", "=>"])
     |> Enum.map(&shaping_atom(&1))
-    |> Enum.split(2)
-    |> Tuple.to_list
+    |> Enum.chunk_every(2)
     |> Enum.map(&Core.arg_convertion(&1))
     |> Enum.map(&List.to_tuple(&1))
     |> Map.new
