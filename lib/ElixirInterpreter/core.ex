@@ -2,7 +2,7 @@ defmodule ElixirInterpreter.Core do
   alias ElixirInterpreter.Core
 
   def to_function(str) when is_binary(str) do
-    [order | args] = str |> String.split()
+    [order | args] = str |> String.split(" ", parts: 2)
 
     {func, module} =
       order
@@ -11,7 +11,6 @@ defmodule ElixirInterpreter.Core do
 
     module = Module.concat(module)
     func = String.to_atom(func)
-    args = Enum.join(args, " ")
     %{module: module, function: func, argments: args}
   end
 
