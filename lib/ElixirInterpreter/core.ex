@@ -2,7 +2,7 @@ defmodule ElixirInterpreter.Core do
   alias ElixirInterpreter.Core
 
   def to_function(str) when is_binary(str) do
-    [order | args] = str |> String.split(" ", parts: 2)
+    [order, args] = str |> String.split(" ", parts: 2)
 
     {func, module} =
       order
